@@ -55,3 +55,7 @@ SAME70_RTOS_Debug/
 /RP2040_RTOS/
 /.clang-format
 /.clangd
+
+.idea
+subprojects/
+!subprojects/*.wrap
