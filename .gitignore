@@ -57,7 +57,7 @@ SAME70_RTOS_Debug/
 /.clangd
 
 .idea
-subprojects/
 !subprojects/*.wrap
+subprojects/FreeRTOS/
 subprojects/.wraplock
 .meson-subproject-wrap-hash.txt

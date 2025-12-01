@@ -1,0 +1,5 @@
+[wrap-git]
+directory = FreeRTOS
+url = https://github.com/EllaFoxo/FreeRTOS.git
+revision = HEAD
+push-url = git@github.com:EllaFoxo/FreeRTOS.git
