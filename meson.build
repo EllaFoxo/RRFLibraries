@@ -81,6 +81,8 @@ if mcu == 'ATSAME51G19A'
         '-fdump-rtl-expand',
         language : 'cpp'
     )
+else
+    error('Target MCU not found:', mcu)
 endif
 
 sources = g.stdout().strip().split(newline)
