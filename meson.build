@@ -1,43 +1,43 @@
 project(
-    'librrflibraries',
+    'RRFLibraries',
     'c',
     'cpp',
     version : '3.6.1',
     default_options : [
         'c_std=gnu99',
         'cpp_std=gnu++17',
-        'board=TOOL1RR'
+        'prefer_static=true'
     ]
 )
+
+mcu = get_option('mcu')
+if mcu == ''
+    error('Target MCU was not specified. Example: -Dmcu=ATSAME51G19A')
+endif
+freertos_mcu = get_option('freertos_mcu')
 
 includes = [
     'src/'
 ]
 
-sources = [
-    'src/General/IP4String.cpp',
-    'src/General/IPAddress.cpp',
-    'src/General/NamedEnum.cpp',
-    'src/General/NumericConverter.cpp',
-    'src/General/SafeStrtod.cpp',
-    'src/General/SafeVsnprintf.cpp',
-    'src/General/SimpleMath.cpp',
-    'src/General/StringBuffer.cpp',
-    'src/General/StringFunctions.cpp',
-    'src/General/StringRef.cpp',
-    'src/General/Strnlen.cpp',
-    'src/Math/Deviation.cpp',
-    'src/Math/DeviationAccumulator.cpp',
-    'src/Math/Isqrt.cpp',
-    'src/RTOSIface/RTOSIface.cpp',
-]
+if build_machine.system() == 'windows'
+    g = run_command('scripts\glob.bat', check : false)
+    source_globber = find_program('scripts\glob.bat')
+else
+    g = run_command('scripts/glob.sh', check : false)
+    source_globber = find_program('scripts/glob.sh')
+endif
 
-if get_option('board') == 'TOOL1RR'
-    includes += []
-    sources += []
+newline = '''
+'''
+
+if mcu == 'ATSAME51G19A'
+    if freertos_mcu == ''
+        freertos_mcu = mcu
+    endif
 
     add_project_arguments(
-        '-D__SAME51N19A__',
+        '-D__SAME51G19A__',
         '-DRTOS',
         '-c',
         '-mcpu=cortex-m4',
@@ -83,17 +83,24 @@ if get_option('board') == 'TOOL1RR'
     )
 endif
 
-libfreertos = subproject('libfreertos')
-libfreertos_dep = libfreertos.get_variable('libfreertos_dep')
+sources = g.stdout().strip().split(newline)
+message('=== Sources ===')
+foreach s : sources
+    message(s)
+endforeach
+message('===============')
 
-librrflibraries = static_library(
-    'rrflibraries',
+freertos = subproject('FreeRTOS', default_options : { 'mcu' : freertos_mcu })
+freertos_dep = freertos.get_variable('freertos_dep')
+
+RRFLibraries = static_library(
+    'RRFLibraries',
     sources,
     include_directories : include_directories(includes),
-    dependencies : libfreertos_dep
+    dependencies : freertos_dep
 )
 
-librrflibraries_dep = declare_dependency(
+RRFLibraries_dep = declare_dependency(
     include_directories : include_directories(includes),
-    link_with : librrflibraries
+    link_with : RRFLibraries
 )

@@ -1,1 +1,2 @@
-option('board', type : 'string', value : 'TOOL1RR', description : 'Board configuration')
+option('mcu', type : 'string', description : 'MCU configuration')
+option('freertos_mcu', type : 'string', description : 'MCU configuration', value : '')
